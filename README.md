@@ -20,7 +20,6 @@ Simple Laravel app for importing Pokemon from PokeAPI, storing them locally, and
 - Tailwind CSS 4
 - PostgreSQL
 - Laravel database queue
-
 ## Setup
 
 1. Clone the repo and move into the project:
@@ -170,6 +169,10 @@ Then log in and click `Sync All`.
 The queued `Sync All` job implements Laravel's `ShouldBeUnique` contract. That means if a full sync job is already queued or currently running, clicking `Sync All` again will not dispatch a second copy of the same job.
 
 In this app, that uniqueness lock is backed by the database cache driver, so the lock is stored in the `cache_locks` table until Laravel releases it after the job completes or finally fails.
+
+If you want to see that lock directly, check the `cache_locks` table while a full sync is queued or running. You should see a row whose key includes `laravel_unique_job:App\\Jobs\\SyncAllPokemon`, which is the lock preventing duplicate `Sync All` jobs from being dispatched.
+
+![Screenshot showing the SyncAllPokemon uniqueness lock in the cache_locks table](image.png)
 
 One small UI limitation right now is that the controller still flashes the same "sync started" success message even when a repeat click was ignored because a sync is already in progress.
 
